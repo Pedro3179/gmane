@@ -17,8 +17,8 @@ def fixsender(sender,allsenders=None) :
     global dnsmapping
     global mapping
     if sender is None : return None
-    sender = sender.strip().lower()
     sender = sender.replace('<','').replace('>','')
+
 
     # Check if we have a hacked gmane.org from address
     if allsenders is not None and sender.endswith('gmane.org') :
@@ -109,7 +109,7 @@ def parseheader(hdr, allsenders=None):
         if len(x) >= 1 :
             sender = x[0]
 
-    # normalize the domain name of Email addresses
+    # normalize (cleanup) the domain name of Email addresses
     sender = fixsender(sender, allsenders)
 
     date = None
@@ -185,6 +185,7 @@ for message_row in cur_1 :
     if sender in allsenders: continue
     allsenders.append(sender)
 
+# A little dump showing important variables to be written in the index.sqlite
 print("Loaded allsenders",len(allsenders),"and mapping",len(mapping),"dns mapping",len(dnsmapping))
 
 cur_1.execute('''SELECT headers, body, sent_at
@@ -200,6 +201,7 @@ for message_row in cur_1 :
     hdr = message_row[0]
     parsed = parseheader(hdr, allsenders)
     if parsed is None: continue
+    # separate all the itens in the tuple "parsed" in different variables
     (guid, sender, subject, sent_at) = parsed
 
     # Apply the sender mapping
