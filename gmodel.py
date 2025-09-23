@@ -204,13 +204,15 @@ for message_row in cur_1 :
     # separate all the itens in the tuple "parsed" in different variables
     (guid, sender, subject, sent_at) = parsed
 
-    # Apply the sender mapping
+    # This code check if the sender is a key in mapping, which means the user changed the address. If it is found, we receive the value of the dict "mapping" that is the new email
     sender = mapping.get(sender,sender)
 
+# Every 250 messages dump some data
     count = count + 1
     if count % 250 == 1 : print(count,sent_at, sender)
     # print(guid, sender, subject, sent_at)
-
+    
+# Check for undesirable data and print an error if we do find it.
     if 'gmane.org' in sender:
         print("Error in sender ===", sender)
 
