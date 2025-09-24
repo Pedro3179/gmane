@@ -1,3 +1,6 @@
+# Script that makes a histogram based on the word counts found in the subjects
+# and writes a gword.js file.
+
 import sqlite3
 import time
 import zlib
@@ -11,7 +14,8 @@ subjects = dict()
 for message_row in cur :
     subjects[message_row[0]] = message_row[1]
 
-# cur.execute('SELECT id, guid,sender_id,subject_id,headers,body FROM Messages')
+# This part makes so that, if you have repeated subjects, the repeated words also count
+
 cur.execute('SELECT subject_id FROM Messages')
 counts = dict()
 for message_row in cur :
@@ -25,15 +29,13 @@ for message_row in cur :
         if len(word) < 4 : continue
         counts[word] = counts.get(word,0) + 1
 
-x = sorted(counts, key=counts.get, reverse=True)
-highest = None
-lowest = None
-for k in x[:100]:
-    if highest is None or highest < counts[k] :
-        highest = counts[k]
-    if lowest is None or lowest > counts[k] :
-        lowest = counts[k]
-print('Range of counts:',highest,lowest)
+x = sorted([(value, key) for key, value in counts.items()], reverse=True)
+
+#print(f'print of {x}')
+top100_highest = max(x[:100])[0]
+top100_lowest = min(x[:100])[0]
+
+print(f'Range of counts: {top100_highest}, {top100_lowest}')
 
 # Spread the font sizes across 20-100 based on the count
 bigsize = 80
@@ -42,11 +44,11 @@ smallsize = 20
 fhand = open('gword.js','w')
 fhand.write("gword = [")
 first = True
-for k in x[:100]:
+for v,k in x[:100]:
     if not first : fhand.write( ",\n")
     first = False
     size = counts[k]
-    size = (size - lowest) / float(highest - lowest)
+    size = (size - top100_lowest) / float(top100_highest - top100_lowest)
     size = int((size * bigsize) + smallsize)
     fhand.write("{text: '"+k+"', size: "+str(size)+"}")
 fhand.write( "\n];\n")

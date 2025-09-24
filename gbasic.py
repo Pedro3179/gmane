@@ -38,6 +38,7 @@ print('')
 print(f'Top {howmany} Email list participants.')
 
 x = sorted(sendcounts, key=sendcounts.get, reverse=True)
+
 for k in x[:howmany]:
     print(senders[k], sendcounts[k])
     if sendcounts[k] < 10 : break
