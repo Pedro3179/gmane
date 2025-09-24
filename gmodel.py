@@ -216,10 +216,13 @@ for message_row in cur_1 :
     if 'gmane.org' in sender:
         print("Error in sender ===", sender)
 
+# Checking if the data is in the dicts of data added the tables
     sender_id = senders.get(sender,None)
     subject_id = subjects.get(subject,None)
     guid_id = guids.get(guid,None)
 
+# Insert the data in the respective columns of the respective tables and creat dicts of these data already added.
+# Then commit.
     if sender_id is None :
         cur.execute('INSERT OR IGNORE INTO Senders (sender) VALUES ( ? )', ( sender, ) )
         conn.commit()
