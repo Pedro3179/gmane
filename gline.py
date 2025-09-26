@@ -18,6 +18,8 @@ for message_row in cur :
 print("Loaded messages=",len(messages),"senders=",len(senders))
 
 sendorgs = dict()
+#print(list(messages.items()))
+
 for (message_id, message) in list(messages.items()):
     sender = message[1]
     pieces = senders[sender].split("@")
